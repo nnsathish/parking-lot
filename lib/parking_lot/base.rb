@@ -3,7 +3,7 @@ require 'parking_lot/car'
 
 module ParkingLot
   class Base
-    attr_accessor :slots, :next_available_slot
+    attr_accessor :slots
 
     def initialize(no_of_slots = 0)
       no_of_slots = no_of_slots.to_i
@@ -16,8 +16,10 @@ module ParkingLot
       no_of_slots.times do |i|
         @slots << Slot.new(i+1)
       end
+    end
 
-      @next_available_slot = 1
+    def next_available_slot
+      @slots.detect(&:free?) # slots are pre-ordered
     end
   end
 end

@@ -9,7 +9,7 @@ module ParkingLot
     def park!(car)
       return unless free?
 
-      self.car = car # TODO::Update Base#next_available_slot!!
+      self.car = car
       'Allocated slot number: ' << self.number.to_s
     end
 

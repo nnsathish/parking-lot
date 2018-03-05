@@ -27,4 +27,46 @@ RSpec.describe ParkingLot::Base do
       end
     end
   end
+
+  describe '#next_available_slot' do
+    let!(:lot_3_slots) { ParkingLot::Base.new(3) }
+    let!(:car) { ParkingLot::Car.new('KA-01-P-244', 'Black') }
+    subject(:slot) { lot_3_slots.next_available_slot }
+    context 'when all slots are free' do
+      it do
+        is_expected.not_to be_nil
+        expect(slot.number).to eq(1)
+      end
+    end
+    context 'when slot1 is occupied' do
+      before { lot_3_slots.slots.first.car = car }
+      it do
+        is_expected.not_to be_nil
+        expect(slot.number).to eq(2)
+      end
+    end
+    context 'when slot1 and slot3 are occupied' do
+      before do
+        lot_3_slots.slots.first.car = car
+        lot_3_slots.slots.last.car = car
+      end
+      it do
+        is_expected.not_to be_nil
+        expect(slot.number).to eq(2)
+      end
+    end
+    context 'when slot3 is occupied' do
+      before { lot_3_slots.slots.last.car = car }
+      it do
+        is_expected.not_to be_nil
+        expect(slot.number).to eq(1)
+      end
+    end
+    context 'when all slots are occupied' do
+      before do
+        lot_3_slots.slots.each { |s| s.car = car }
+      end
+      it { is_expected.to be_nil }
+    end
+  end
 end
