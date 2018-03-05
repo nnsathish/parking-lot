@@ -15,7 +15,7 @@ RSpec.describe ParkingLot::Base do
       end
       context 'with larger slots count' do
         let(:no_of_slots) { 100 }
-        it { expect(base.slots.count).to eq(MAX_ALLOWED_SLOTS) }
+        it { expect(base.slots.count).to eq(ParkingLot::MAX_ALLOWED_SLOTS) }
       end
       context 'with invalid count value' do
         let(:no_of_slots) { 'afaf' }
