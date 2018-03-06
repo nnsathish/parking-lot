@@ -1,5 +1,6 @@
 RSpec.describe ParkingLot::Base do
   let!(:lot_2_slots) { ParkingLot::Base.new(2) }
+  let!(:lot_3_slots) { ParkingLot::Base.new(3) }
   let!(:white_car) { ParkingLot::Car.new('TN-22-CQ-2455', 'White') }
   let!(:red_car) { ParkingLot::Car.new('TN-01-CQ-1255', 'Red') }
 
@@ -33,7 +34,6 @@ RSpec.describe ParkingLot::Base do
   end
 
   describe '#next_available_slot' do
-    let!(:lot_3_slots) { ParkingLot::Base.new(3) }
     let!(:car) { ParkingLot::Car.new('KA-01-P-244', 'Black') }
     subject(:slot) { lot_3_slots.next_available_slot }
     context 'when all slots are free' do
