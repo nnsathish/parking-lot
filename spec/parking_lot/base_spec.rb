@@ -139,7 +139,7 @@ RSpec.describe ParkingLot::Base do
       end
       context 'when no car matches the color' do
         let(:color) { 'Blue' }
-        it { is_expectd.to eq 'Not Found' }
+        it { is_expected.to eq 'Not Found' }
       end
       context 'when a car matches the color' do
         let(:color) { 'Red' }
@@ -172,7 +172,7 @@ RSpec.describe ParkingLot::Base do
       end
       context 'when no car matches the color' do
         let(:color) { 'Blue' }
-        it { is_expectd.to eq 'Not Found' }
+        it { is_expected.to eq 'Not Found' }
       end
       context 'when a car matches the color' do
         let(:color) { 'Red' }
