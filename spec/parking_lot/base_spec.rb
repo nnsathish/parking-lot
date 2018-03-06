@@ -1,4 +1,8 @@
 RSpec.describe ParkingLot::Base do
+  let!(:lot_2_slots) { ParkingLot::Base.new(2) }
+  let!(:white_car) { ParkingLot::Car.new('TN-22-CQ-2455', 'White') }
+  let!(:red_car) { ParkingLot::Car.new('TN-01-CQ-1255', 'Red') }
+
   describe '#initialize' do
     context 'with no arguments' do
       subject(:base) { ParkingLot::Base.new }
@@ -71,9 +75,6 @@ RSpec.describe ParkingLot::Base do
   end
 
   describe '#park' do
-    let!(:lot_2_slots) { ParkingLot::Base.new(2) }
-    let!(:white_car) { ParkingLot::Car.new('TN-22-CQ-2455', 'White') }
-    let!(:red_car) { ParkingLot::Car.new('TN-01-CQ-1255', 'Red') }
     subject { lot_2_slots.park(white_car) }
     context 'when a slot is available' do
       it do
@@ -96,6 +97,121 @@ RSpec.describe ParkingLot::Base do
         expect_any_instance_of(ParkingLot::Slot).not_to receive(:park!)
       end
       it { is_expected.to be_nil }
+    end
+  end
+
+  describe '#leave' do
+    subject { lot_2_slots.leave(slot_no) }
+    context 'when slot_no is invalid' do
+      let(:slot_no) { 4 } # out of boundary
+      it { is_expected.to eq 'Not Found' }
+    end
+    context 'when slot_no is valid' do
+      before { lot_2_slots.park(red_car) }
+      let(:slot_no) { 1 }
+      it { is_expected.to eq 'Slot number 1 is free' }
+    end
+  end
+
+  describe '#status' do
+    subject { lot_2_slots.status }
+    context 'when no car is parked' do
+      it { is_expected.to eq '' }
+    end
+    context 'when a car is parked' do
+      before { lot_2_slots.park(white_car) }
+      it { is_expected.to eq "Slot No.\tRegistration No\tColour\n1\t#{white_car.reg_no}\t#{white_car.colour}" }
+    end
+  end
+
+  describe '#registration_numbers_for_cars_with_colour' do
+    let!(:another_white_car) { ParkingLot::Car.new('TN-01-A-1234', 'White') }
+    subject { lot_3_slots.registration_numbers_for_cars_with_colour(color) }
+    context 'when no cars are parked' do
+      let(:color) { 'White' }
+      it { is_expected.to eq 'Not Found' }
+    end
+    context 'when cars are parked' do
+      before do
+        lot_3_slots.park(white_car)
+        lot_3_slots.park(red_car)
+        lot_3_slots.park(another_white_car)
+      end
+      context 'when no car matches the color' do
+        let(:color) { 'Blue' }
+        it { is_expectd.to eq 'Not Found' }
+      end
+      context 'when a car matches the color' do
+        let(:color) { 'Red' }
+        it { is_expected.to eq red_car.reg_no }
+      end
+      context 'when multiple cars matches the color' do
+        let(:color) { 'White' }
+        it { is_expected.to eq [white_car.reg_no, another_white_car.reg_no].join(", ") }
+      end
+      context 'with a case mismatched color value' do
+        let(:color) { 'white' }
+        it { is_expected.to eq [white_car.reg_no, another_white_car.reg_no].join(", ") }
+      end
+    end
+  end
+
+  # ideal scenario for shared_examples!
+  describe '#slot_numbers_for_cars_with_colour' do
+    let!(:another_white_car) { ParkingLot::Car.new('TN-01-A-1234', 'White') }
+    subject { lot_3_slots.slot_numbers_for_cars_with_colour(color) }
+    context 'when no cars are parked' do
+      let(:color) { 'White' }
+      it { is_expected.to eq 'Not Found' }
+    end
+    context 'when cars are parked' do
+      before do
+        lot_3_slots.park(white_car)
+        lot_3_slots.park(red_car)
+        lot_3_slots.park(another_white_car)
+      end
+      context 'when no car matches the color' do
+        let(:color) { 'Blue' }
+        it { is_expectd.to eq 'Not Found' }
+      end
+      context 'when a car matches the color' do
+        let(:color) { 'Red' }
+        it { is_expected.to eq 2 }
+      end
+      context 'when multiple cars matches the color' do
+        let(:color) { 'White' }
+        it { is_expected.to eq '1, 3' }
+      end
+      context 'with a case mismatched color value' do
+        let(:color) { 'white' }
+        it { is_expected.to eq '1, 3' }
+      end
+    end
+  end
+
+  describe '#slot_number_for_registration_number' do
+    subject { lot_2_slots.slot_number_for_registration_number(reg_no) }
+    context 'when no cars are parked' do
+      let(:reg_no) { white_car.reg_no }
+      it { is_expected.to eq 'Not Found' }
+    end
+    context 'when cars are parked' do
+      before do
+        lot_2_slots.park(white_car)
+        lot_2_slots.park(red_car)
+      end
+      context 'when no car matches the reg_no' do
+        let(:reg_no) { 'KL-02-A-999' }
+        it { is_expected.to eq 'Not Found' }
+      end
+      context 'when a car matches the reg_no' do
+        let(:reg_no) { white_car.reg_no }
+        it { is_expected.to eq 1 }
+      end
+      context 'with a case mismatched reg_no value' do
+        let(:reg_no) { red_car.reg_no.downcase }
+        it { is_expected.to eq 2 }
+      end
     end
   end
 end
