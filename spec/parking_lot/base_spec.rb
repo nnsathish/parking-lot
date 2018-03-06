@@ -120,7 +120,7 @@ RSpec.describe ParkingLot::Base do
     end
     context 'when a car is parked' do
       before { lot_2_slots.park(white_car) }
-      it { is_expected.to eq "Slot No.\tRegistration No\tColour\n1\t#{white_car.reg_no}\t#{white_car.colour}" }
+      it { is_expected.to eq "Slot No.\tRegistration No\tColour\n1\t#{white_car.reg_no}\t#{white_car.color}" }
     end
   end
 
@@ -176,7 +176,7 @@ RSpec.describe ParkingLot::Base do
       end
       context 'when a car matches the color' do
         let(:color) { 'Red' }
-        it { is_expected.to eq 2 }
+        it { is_expected.to eq '2' }
       end
       context 'when multiple cars matches the color' do
         let(:color) { 'White' }
