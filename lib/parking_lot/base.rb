@@ -21,5 +21,24 @@ module ParkingLot
     def next_available_slot
       @slots.detect(&:free?) # slots are pre-ordered
     end
+
+    def park(car)
+      return if already_parked?(car)
+
+      slot = next_available_slot
+      return 'Sorry, parking lot is full' unless slot
+
+      slot.park!(car)
+    end
+
+    private
+
+    def cars_parked
+      @slots.map(&:car).compact
+    end
+
+    def already_parked?(car)
+      cars_parked.map(&:reg_no).include?(car.reg_no)
+    end
   end
 end
