@@ -69,4 +69,33 @@ RSpec.describe ParkingLot::Base do
       it { is_expected.to be_nil }
     end
   end
+
+  describe '#park' do
+    let!(:lot_2_slots) { ParkingLot::Base.new(2) }
+    let!(:white_car) { ParkingLot::Car.new('TN-22-CQ-2455', 'White') }
+    let!(:red_car) { ParkingLot::Car.new('TN-01-CQ-1255', 'Red') }
+    subject { lot_2_slots.park(white_car) }
+    context 'when a slot is available' do
+      it do
+        is_expected.not_to be_nil
+        expect(lot_2_slots.slots.first.car).to eq(white_car)
+      end
+    end
+    context 'when no slots are available' do
+      before do
+        lot_2_slots.park(ParkingLot::Car.new('MH-23-Q-355', 'Yellow'))
+        lot_2_slots.park(red_car)
+        expect_any_instance_of(ParkingLot::Slot).not_to receive(:park!)
+      end
+      it { is_expected.to eq 'Sorry, parking lot is full' }
+    end
+    context 'when a car is already parked' do
+      before do
+        lot_2_slots.park(white_car)
+        expect(lot_2_slots).not_to receive(:next_available_slot)
+        expect_any_instance_of(ParkingLot::Slot).not_to receive(:park!)
+      end
+      it { is_expected.to be_nil }
+    end
+  end
 end
