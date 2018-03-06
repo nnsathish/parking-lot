@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "parking_lot"
+
+input_file = ARGV.first.to_s.strip
+cli = ParkingLot::CLI.instance
+
+unless input_file.empty?
+  result = cli.run_with_file(input_file)
+  result = result.join("\n") if result.is_a?(Array)
+  puts result
+  exit(0)
+end
+
+puts 'Enter the command [Press Enter to exit]'
+while (cmd = gets.chomp.strip) != '' do
+  res = cli.run_command(cmd)
+  puts res
+end
+
+puts 'Done.'

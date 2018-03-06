@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# install bundler
+if [ `gem list -i bundler -v 1.16.1` = 'false' ]; then
+  gem install bundler
+fi
+
+# install other gem dependencies
+bash bin/setup
+
+# Run Tests
+rake
+
+# Start ruby script for input handling
+ruby bin/parking_cli $1
