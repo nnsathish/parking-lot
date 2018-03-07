@@ -16,4 +16,3 @@ slot_number_for_registration_number car
 slot_numbers_for_cars_with_colour WHIte
 slot_number_for_registration_number car3
 slot_number_for_registration_number car4
-
