@@ -23,7 +23,8 @@ module ParkingLot
       @slots.detect(&:free?) # slots are pre-ordered
     end
 
-    def park(car)
+    def park(car_or_reg_no, color = nil)
+      car = car_or_reg_no.is_a?(Car) ? car_or_reg_no : Car.new(car_or_reg_no, color)
       return if already_parked?(car)
 
       slot = next_available_slot
