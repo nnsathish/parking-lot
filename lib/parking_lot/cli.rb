@@ -39,7 +39,6 @@ module ParkingLot
         "Created a parking lot with #{self.base.slots.length} slots"
       else
         return 'Please run create_parking_lot first' unless self.base
-        self.base.public_send(meth, *args)
       end
     end
   end
